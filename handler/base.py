@@ -1,12 +1,11 @@
 # coding=utf-8
 import os
-import logging
 import tornado.web
 import tornado.escape
 from urllib import quote
 from tornado.httpclient import AsyncHTTPClient
 from lib.exception import MyException, MissingArgument, InternalServerError
-logger = logging.getLogger('application.handler')
+from lib.logger import logger
 
 
 class Response(dict):
