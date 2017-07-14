@@ -1,5 +1,6 @@
 # coding=utf-8
 import os
+import logging
 import tornado.web
 from lib.mysql import DBConnectionPool
 from setting.mysql import MYSQLCONF
@@ -27,3 +28,25 @@ class Application(tornado.web.Application):
         }
         super(Application, self).__init__(handlers=handlers, **settings)
         self.pool = DBConnectionPool(init_idle_connections=5, **MYSQLCONF)
+        self.init_logger()
+
+    @staticmethod
+    def init_logger():
+        logger = logging.getLogger(name='application')
+        # file handler
+        fh = logging.FileHandler('application.log')
+        fh.setLevel(logging.DEBUG)
+        # console handler
+        sh = logging.StreamHandler()
+        sh.setLevel(logging.DEBUG)
+        # log formatter
+        fmt = '%(asctime)-15s - %(levelname)s - %(name)s - %(filename)s %(lineno)d - %(message)s'
+        datefmt = '%Y-%m-%d %H:%M:%S'
+        formatter = logging.Formatter(fmt, datefmt)
+        # setting log
+        fh.setFormatter(formatter)
+        sh.setFormatter(formatter)
+        logger.addHandler(fh)
+        logger.addHandler(sh)
+        # 日志信息不向上传递
+        logger.propagate = False

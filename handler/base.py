@@ -1,10 +1,12 @@
 # coding=utf-8
 import os
+import logging
 import tornado.web
 import tornado.escape
 from urllib import quote
 from tornado.httpclient import AsyncHTTPClient
 from lib.exception import MyException, MissingArgument, InternalServerError
+logger = logging.getLogger('application.handler')
 
 
 class Response(dict):
@@ -42,6 +44,7 @@ class Basehandler(tornado.web.RequestHandler):
         if not self.current_user:
             self.redirect('/login?_callback=' + quote(self.request.protocol + '://' + self.request.host + self.request.uri))
         else:
+            logger.debug('already signed in.')
             pass
 
     @property
