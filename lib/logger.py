@@ -25,5 +25,13 @@ def set_logger_stream_handler(level=logging.DEBUG):
     sh.setFormatter(fmt=_get_formatter())
     logger.addHandler(sh)
 
+
+def disable_logger(logger_name):
+    nh = logging.NullHandler()
+    nh.setLevel(logging.DEBUG)
+    logging.getLogger(logger_name).addHandler(nh)
+    logging.getLogger(logger_name).propagate = False
+
+
 # sub logger 会继承父类logger application的相关配置,可在其他模块直接import后使用
 sub_logger = logging.getLogger('application.subname')

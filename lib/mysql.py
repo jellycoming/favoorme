@@ -148,9 +148,14 @@ class DBConnection(object):
             except TypeError:
                 rv = None  # cursor.description is None means not select sql, raise TypeError: 'NoneType' object is not iterable
             return Result(rv=rv, lastrowid=cursor.lastrowid, rowcount=cursor.rowcount)
-        except Exception:
+        except Exception as e:
             self.rollback()
-            raise
+            # IntegrityError(1062, "Duplicate entry ... for key ...")
+            # IntegrityError(1062, "Duplicate entry ... for key ...")
+            code, msg = e
+            if code == 1062:
+                msg = '记录已存在!'
+            raise Exception(msg)
         finally:
             if cursor:
                 cursor.close()
