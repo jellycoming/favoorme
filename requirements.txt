@@ -1,2 +1,4 @@
+Crypto
 tornado==4.3
 MySQL-python==1.2.5
+pycrypto==2.6.1
