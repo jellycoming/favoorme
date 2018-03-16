@@ -4,7 +4,7 @@ import tornado.web
 from lib import log
 from lib.mysql import DBConnectionPool
 from setting.mysql import MYSQLCONF
-from setting.web import HTTP_SERVER_DEBUG, WEB_PATH_PRODUCTION, WEB_PATH_DEVELOP
+from setting.web import HTTP_SERVER_DEBUG, WEB_PATH_PRODUCTION, WEB_PATH_DEVELOP, COOKIE_SECRET
 from handler.base import MainHandler, StaticHandler, SigninHandler, SignoutHandler
 from handler.app import AppHandler
 
