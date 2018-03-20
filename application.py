@@ -1,9 +1,11 @@
 # coding=utf-8
 import os
 import tornado.web
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from lib import log
 from lib.mysql import DBConnectionPool
-from setting.mysql import MYSQLCONF
+from setting.mysql import MYSQLCONF, CONNSTR
 from setting.web import HTTP_SERVER_DEBUG, WEB_PATH_PRODUCTION, WEB_PATH_DEVELOP, COOKIE_SECRET
 from handler.base import MainHandler, StaticHandler, SigninHandler, SignoutHandler
 from handler.app import AppHandler
@@ -28,5 +30,6 @@ class Application(tornado.web.Application):
         }
         super(Application, self).__init__(handlers=handlers, **settings)
         self.pool = DBConnectionPool(init_idle_connections=5, **MYSQLCONF)
+        self.DBSession = sessionmaker(bind=create_engine(CONNSTR))
         log.set_stream_handler(level=log.DEBUG)
         log.disable_logger('tornado.access')

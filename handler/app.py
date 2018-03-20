@@ -5,6 +5,7 @@ from lib.exception import BadRequest
 from handler.base import Basehandler, Response
 from handler.api import BaseApi
 from model.items import App
+from model.dao.app import AppDao
 from lib.util import randkey
 
 
@@ -14,10 +15,17 @@ class AppHandler(Basehandler):
     POST: 如果指定appid,修改或删除(post data为空则删除);未指定appid,则添加
     """
     def get(self, appid=None):
-        with self.db as db:
-            res = db.execute(App.retrieve(appid=appid))
-            rv = res.all if appid is None else res.one
-        self.write(Response(data=rv))
+        if appid is not None:
+            with self.db as db:
+                res = db.execute(App.retrieve(appid=appid))
+                rv = res.all if appid is None else res.one
+            self.write(Response(data=rv))
+        else:
+            with self.dbsession as dbsession:
+                dao = AppDao(dbsession=dbsession)
+                dao.update(appid=appid, name='hello')
+                app = dao.retrieve_one(appid=appid)
+                self.write(app.name)
 
     @tornado.web.asynchronous
     @tornado.gen.coroutine

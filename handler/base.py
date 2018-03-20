@@ -6,6 +6,7 @@ import tornado.escape
 from urllib import quote
 from tornado.httpclient import AsyncHTTPClient
 from lib.exception import MyException, MissingArgument, InternalServerError
+from lib.mysql import DBSession
 logger = logging.getLogger(__name__)
 
 
@@ -27,6 +28,10 @@ class Basehandler(tornado.web.RequestHandler):
     @property
     def db(self):
         return self.application.pool.connection()
+
+    @property
+    def dbsession(self):
+        return DBSession(self.application.DBSession())
 
     def get_current_user(self):
         return self.get_secure_cookie('user')
@@ -52,6 +57,7 @@ class Basehandler(tornado.web.RequestHandler):
         return self._post_data
 
     def _handle_request_exception(self, e):
+        logger.error(e)
         if not isinstance(e, MyException):
             e = InternalServerError(description=str(e))
         self.finish(Response(code=e.code, msg=e.description))

@@ -214,3 +214,22 @@ class Result(object):
     @property
     def rowcount(self):
         return self._rowcount
+
+
+class DBSession(object):
+    """
+    对SQLAlchemy session对象的封装，使之在默认autocommit=False的情况下支持with语法;
+    session.begin()返回的transcation对象也支持with语法，但是需要设置autocommit=True。
+    """
+    def __init__(self, session):
+        self.session = session
+
+    def __enter__(self):
+        return self.session
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type:
+            self.session.rollback()
+        else:
+            self.session.commit()
+        self.session.close()
