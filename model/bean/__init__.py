@@ -1,12 +1,14 @@
 # coding=utf-8
 from sqlalchemy.ext.declarative import declarative_base
 
-Base = declarative_base()
 
-
-class BaseModel(Base):
-    def __init__(self):
-        pass
-
+class BaseModel(object):
     def __repr__(self):
-        return "{}(id='{}')".format(type(self).__name__, getattr(self, 'id'))
+        _desc = []
+        for k, v in self.__dict__.iteritems():
+            if not k == '_sa_instance_state':
+                _desc.append("{}='{}'".format(k, v))
+        return '{}({})'.format(type(self).__name__, ','.join(_desc))
+
+
+Base = declarative_base(cls=BaseModel)
